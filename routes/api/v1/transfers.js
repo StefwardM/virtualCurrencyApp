@@ -1,24 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const transferController = require('../../../controllers/api/v1/transfers');
 
-router.get("/", (req, res) => {
-    res.json({
-        "status": "success",
-        "data": {
-            "todos": []
-        }
-    });
-});
+router.get("/", transferController.getAll);
 
-router.post("/", (req, res) => {
-    res.json({
-        "status": "success",
-        "data": {
-            "todo": {
-                "text": "learn Node.js"
-            }
-        }
-    });
-});
+router.post("/", transferController.create);
 
 module.exports = router;
