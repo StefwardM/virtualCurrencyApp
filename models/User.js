@@ -10,6 +10,9 @@ const User = new Schema({
     lastname: {
         type: String,
         required: true
+    },
+    coins : {
+        type: Number
     }
 });
 User.plugin(passportLocalMongoose);

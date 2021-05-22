@@ -6,19 +6,26 @@ const signup = async (req, res, next) => {
     let firstname = req.body.firstname;
     let lastname = req.body.lastname;
     let password = req.body.password;
+    let coins = 100;
 
-    const user = new User({username: username, firstname: firstname, lastname: lastname});
-    await user.setPassword(password);
-    await user.save().then(result => {
-        res.json({
-            "status": "success"
-        })
-    }).catch(error => {
-        res.json({
-            "status": "error"
-        })
-    });
+    if(username.includes('@student.thomasmore.be')) {
+        const user = new User({username: username, firstname: firstname, lastname: lastname, coins: coins});
+        await user.setPassword(password);
+        await user.save().then(result => {
+            res.json({
+                "status": "success"
+            })
+        }).catch(error => {
+            res.json({
+                "status": "error"
+            })
+        });
+    }
+    else {
+        throw "email must include @student.thomasmore.be"
+    }
 };
+
 
 const login = async  (req, res, next) => {
     const user = await User.authenticate()(req.body.username, req.body.password)
