@@ -9,6 +9,7 @@ const usersRouter = require('./routes/users');
 const apiTransfersRouter = require('./routes/api/v1/transfers');
 
 const mongoose = require('mongoose');
+mongoose.set('useCreateIndex', true);
 mongoose.connect('mongodb://localhost:27017/pepecoinapp', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const app = express();
