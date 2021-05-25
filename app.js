@@ -3,10 +3,16 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+const cors = require('cors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const apiTransfersRouter = require('./routes/api/v1/transfers');
+const apiLeaderboardRouter = require('./routes/api/v1/leaderboard');
+const passport = require('./passport/passport');
+
+const mongoose = require('mongoose');
+mongoose.set('useCreateIndex', true);
+mongoose.connect('mongodb://localhost:27017/pepecoinapp', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/pepecoinapp',
@@ -26,9 +32,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/api/v1/transfers', apiTransfersRouter);
+app.use('/api/v1/leaderboard', apiLeaderboardRouter);
+app.use('/api/v1/transfers', passport.authenticate('jwt', {session: false}), apiTransfersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
