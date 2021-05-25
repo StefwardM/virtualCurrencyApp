@@ -7,6 +7,7 @@ const cors = require('cors');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const apiTransfersRouter = require('./routes/api/v1/transfers');
+const apiLeaderboardRouter = require('./routes/api/v1/leaderboard');
 const passport = require('./passport/passport');
 
 const mongoose = require('mongoose');
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api/v1/leaderboard', apiLeaderboardRouter);
 app.use('/api/v1/transfers', passport.authenticate('jwt', {session: false}), apiTransfersRouter);
 
 // catch 404 and forward to error handler

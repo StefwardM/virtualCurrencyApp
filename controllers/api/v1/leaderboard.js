@@ -1,17 +1,23 @@
-const Leaderboard = require('../../../models/Leaderboard');
+const User = require('../../../models/User');
 
 const getLeaderboard = (req, res) => {
-    Leaderboard.find().sort({"coins": req.user.coins}).toArray (err, res) => {
-        if(!err){
+    let sortCoins = {coins: "descending"};
+    User.find( (err, docs) => {
+        if(err) {
+            res.json({
+                "status": "error",
+                "message": err
+            })
+        }
+        else{
             res.json({
                 "status": "success",
                 "data": {
-                    "transfers": docs
+                    "users": docs
                 }
             });
         }
-    });
-
+    }).sort(sortCoins);
 }
 
-module.exports.getLeaderboard = getLeaderboard();
+module.exports.getLeaderboard = getLeaderboard;
