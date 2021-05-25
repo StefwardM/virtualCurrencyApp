@@ -13,6 +13,10 @@ const transferSchema = new Schema({
     amount: {
         type: Number,
         required: true
+    },
+    reason: {
+        type: String,
+        required: true
     }
 });
 const Transfer = mongoose.model('Transfer', transferSchema);
