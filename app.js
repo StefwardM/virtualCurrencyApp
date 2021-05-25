@@ -14,6 +14,12 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 mongoose.connect('mongodb://localhost:27017/pepecoinapp', {useNewUrlParser: true, useUnifiedTopology: true});
 
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/pepecoinapp',
+    {useNewUrlParser: true, useUnifiedTopology: true
+    });
+
+
 const app = express();
 
 // view engine setup

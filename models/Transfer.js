@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
 const transferSchema = new Schema({
     sender: {
         type: String,
@@ -20,5 +21,6 @@ const transferSchema = new Schema({
     }
 });
 const Transfer = mongoose.model('Transfer', transferSchema);
+
 
 module.exports = Transfer;
