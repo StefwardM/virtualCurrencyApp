@@ -40,7 +40,5 @@ const getUserById = (req, res) => {
     })
 }
 
-
-
 module.exports.getAll = getAll;
 module.exports.getUserById = getUserById;

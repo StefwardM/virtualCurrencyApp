@@ -1,31 +1,45 @@
 const Transfer = require('../../../models/Transfer');
 
-const getAll = (req, res) => {
-
-    Transfer.find({"sender": req.user._id}, (err, docs) => {
+const getAllByPpName = (req, res) => {
+    Transfer.find({$or:[{"sender": req.user.ppname}, {"recipient": req.user.ppname}]}, (err, docs) => {
         if(!err){
             res.json({
                 "status": "success",
                 "data": {
                     "transfers": docs
-
-                }
+                },
+                "ppname": req.user.ppname
             });
         }
     });
-
 }
 
+const getTransferById = (req, res) => {
+    Transfer.findById(req.params.id, (err, docs) => {
+        if(err) {
+            res.json({
+                "status": "error",
+                "message": err
+            })
+        }
+        else{
+            res.json({
+                "status": "success",
+                "data": {
+                    "transfers": docs
+                }
+            });
+        }
+    })
+}
 
 const create = (req, res) => {
-    console.log(req.body);
-
+    let senderUsername = req.user.ppname;
     let transfer = new Transfer();
-    transfer.sender = req.body.sender;
+    transfer.sender = senderUsername;
     transfer.recipient = req.body.recipient;
     transfer.message = req.body.message;
     transfer.amount = req.body.amount;
-
     transfer.reason = req.body.reason;
     transfer.save((err, doc) => {
        if (err) {
@@ -43,19 +57,10 @@ const create = (req, res) => {
 
             });
         }
-
-        if(!err){
-            res.json({
-                "status": "success",
-                "data": {
-                    "transfer": doc
-                }
-            });
-        }
     })
-
-
 }
 
-module.exports.getAll = getAll;
+// module.exports.getHistory = getHistory;
+module.exports.getTransferById = getTransferById;
+module.exports.getAll = getAllByPpName;
 module.exports.create = create;
