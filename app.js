@@ -10,11 +10,12 @@ const apiTransfersRouter = require('./routes/api/v1/transfers');
 const apiTransferRouter = require('./routes/api/v1/transfer');
 const apiLeaderboardRouter = require('./routes/api/v1/leaderboard');
 const passport = require('./passport/passport');
+const config =require('config');
 
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
-mongoose.connect('mongodb://localhost:27017/pepecoinapp', {useNewUrlParser: true, useUnifiedTopology: true});
-
+mongoose.connect(config.get('Database.conn'), {useNewUrlParser: true, useUnifiedTopology: true});
+console.log(config.get('Database'));
 const app = express();
 
 // view engine setup

@@ -34,9 +34,8 @@ const getTransferById = (req, res) => {
 }
 
 const create = (req, res) => {
-    let senderUsername = req.user.ppname;
     let transfer = new Transfer();
-    transfer.sender = senderUsername;
+    transfer.sender = req.user.ppname;
     transfer.recipient = req.body.recipient;
     transfer.message = req.body.message;
     transfer.amount = req.body.amount;
@@ -45,7 +44,10 @@ const create = (req, res) => {
        if (err) {
            res.json({
                "status": "error",
-               "message": "Could not save this transfer"
+               "message": "Could not save this transfer",
+               "transfer": transfer,
+               "error": err,
+               "user":req.user.ppname
            });
        }
         if (!err) {
