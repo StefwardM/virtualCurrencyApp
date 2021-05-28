@@ -60,7 +60,13 @@ const create = (req, res) => {
     })
 }
 
-// module.exports.getHistory = getHistory;
+const update = (req, res) => {
+    let user = req.user.ppname;
+    let transferId = req.params.id;
+    console.log(transferId);
+}
+
+module.exports.update = update;
 module.exports.getTransferById = getTransferById;
 module.exports.getAll = getAllByPpName;
 module.exports.create = create;
