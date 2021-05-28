@@ -1,4 +1,5 @@
 const Transfer = require('../../../models/Transfer');
+const User = require('../../../models/User');
 
 const getAllByPpName = (req, res) => {
     Transfer.find({$or:[{"sender": req.user.ppname}, {"recipient": req.user.ppname}]}, (err, docs) => {
@@ -41,32 +42,38 @@ const create = (req, res) => {
     transfer.message = req.body.message;
     transfer.amount = req.body.amount;
     transfer.reason = req.body.reason;
-    transfer.save((err, doc) => {
-       if (err) {
-           res.json({
-               "status": "error",
-               "message": "Could not save this transfer"
-           });
-       }
-        if (!err) {
+    User.findOne({ppname: senderUsername}, {"coins": 1}, (err, doc) => {
+        if(err){
             res.json({
-                "status": "success",
-                "data": {
-                    "transfer": doc
-                }
-
-            });
+                "status": "Error",
+                "message": "User doesn't exist."
+            })
+        }
+        else{
+            let coins = doc.coins;
+            if((req.body.amount > 0) && (coins >= req.body.amount)) {
+                transfer.save((err, doc) => {
+                    if (err) {
+                        res.json({
+                            "status": "error",
+                            "message": "Could not save this transfer - not enough coins in balance!"
+                        });
+                    }
+                    else {
+                        res.json({
+                            "status": "success",
+                            "data": {
+                                "transfer": doc
+                            }
+                        });
+                    }
+                })
+            }
         }
     })
+
 }
 
-const update = (req, res) => {
-    let user = req.user.ppname;
-    let transferId = req.params.id;
-    console.log(transferId);
-}
-
-module.exports.update = update;
 module.exports.getTransferById = getTransferById;
 module.exports.getAll = getAllByPpName;
 module.exports.create = create;
