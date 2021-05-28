@@ -51,7 +51,8 @@ const create = (req, res) => {
         }
         else{
             let coins = doc.coins;
-            if((req.body.amount > 0) && (coins >= req.body.amount)) {
+            let amount = req.body.amount;
+            if((amount > 0) && (coins >= amount)) {
                 transfer.save((err, doc) => {
                     if (err) {
                         res.json({
@@ -60,6 +61,24 @@ const create = (req, res) => {
                         });
                     }
                     else {
+                        User.findOneAndUpdate({ppname: senderUsername}, {$inc: {coins: parseInt(`-${amount}`)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
+                            if (err) {
+                                res.json({
+                                    "status": "error",
+                                    "message": "Could not save this transfer - Something went wrong with updating the users coins (sender)"
+                                });
+                            }
+                            else {
+                                User.findOneAndUpdate({ppname: req.body.recipient}, {$inc: {coins: parseInt(amount)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
+                                    if (err) {
+                                        res.json({
+                                            "status": "error",
+                                            "message": "Could not save this transfer - Something went wrong with updating the users coins (recipient)"
+                                        });
+                                    }
+                                })
+                            }
+                        })
                         res.json({
                             "status": "success",
                             "data": {
@@ -71,7 +90,6 @@ const create = (req, res) => {
             }
         }
     })
-
 }
 
 module.exports.getTransferById = getTransferById;
