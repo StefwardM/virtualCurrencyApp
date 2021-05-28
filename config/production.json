@@ -1,6 +1,6 @@
 {
   "Database": {
-    "conn": "mongodb+srv://pepeNodejs:JveOjfDtSChrDZ5F@cluster0.mxvxy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    "conn": "mongodb://localhost:27017/pepecoinapp"
   },
   "jwt": {
     "secret": "MyVerySecretWord"
