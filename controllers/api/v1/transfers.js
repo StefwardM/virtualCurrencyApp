@@ -42,6 +42,7 @@ const create = (req, res) => {
     transfer.message = req.body.message;
     transfer.amount = req.body.amount;
     transfer.reason = req.body.reason;
+
     User.findOne({ppname: senderUsername}, {"coins": 1}, (err, doc) => {
         if(err){
             res.json({
@@ -49,46 +50,57 @@ const create = (req, res) => {
                 "message": "User doesn't exist."
             })
         }
-        else{
-            let coins = doc.coins;
-            let amount = req.body.amount;
-            if((amount > 0) && (coins >= amount)) {
-                transfer.save((err, doc) => {
-                    if (err) {
-                        res.json({
-                            "status": "error",
-                            "message": "Could not save this transfer - not enough coins in balance!"
-                        });
-                    }
-                    else {
-                        User.findOneAndUpdate({ppname: senderUsername}, {$inc: {coins: parseInt(`-${amount}`)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
+        else {
+            User.count({ppname: req.body.recipient}, (err, count) => {
+                if(count <= 0){
+                    res.json({
+                       "status": "Error",
+                       "message": "The user you try to send coins to doesn't exist."
+                    })
+                }
+                else{
+                    let coins = doc.coins;
+                    let amount = req.body.amount;
+                    if((amount > 0) && (coins >= amount)) {
+                        transfer.save((err, doc) => {
                             if (err) {
                                 res.json({
                                     "status": "error",
-                                    "message": "Could not save this transfer - Something went wrong with updating the users coins (sender)"
+                                    "message": "Could not save this transfer - not enough coins in balance!"
                                 });
                             }
                             else {
-                                User.findOneAndUpdate({ppname: req.body.recipient}, {$inc: {coins: parseInt(amount)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
+                                User.findOneAndUpdate({ppname: senderUsername}, {$inc: {coins: parseInt(`-${amount}`)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
                                     if (err) {
                                         res.json({
                                             "status": "error",
-                                            "message": "Could not save this transfer - Something went wrong with updating the users coins (recipient)"
+                                            "message": "Could not save this transfer - Something went wrong with updating the users coins (sender)"
                                         });
                                     }
+                                    else {
+                                        User.findOneAndUpdate({ppname: req.body.recipient}, {$inc: {coins: parseInt(amount)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
+                                            if (err) {
+                                                res.json({
+                                                    "status": "error",
+                                                    "message": "Could not save this transfer - Something went wrong with updating the users coins (recipient)"
+                                                });
+                                            }
+                                        })
+                                    }
                                 })
+                                res.json({
+                                    "status": "success",
+                                    "data": {
+                                        "transfer": doc
+                                    }
+                                });
                             }
                         })
-                        res.json({
-                            "status": "success",
-                            "data": {
-                                "transfer": doc
-                            }
-                        });
                     }
-                })
-            }
+                }
+            })
         }
+
     })
 }
 
