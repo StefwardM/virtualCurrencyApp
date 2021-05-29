@@ -10,7 +10,9 @@ const signup = async (req, res, next) => {
     let ppname = req.body.ppname;
     let coins = 100;
 
-    if(username.includes('@student.thomasmore.be')) {
+    let mail = username.split("@");
+
+    if(mail[1] === "student.thomasmore.be" || mail[1] === "thomasmore.be") {
         const user = new User({username: username, firstname: firstname, lastname: lastname, ppname: ppname, coins: coins});
         await user.setPassword(password);
         await user.save().then(result => {
@@ -35,7 +37,10 @@ const signup = async (req, res, next) => {
         });
     }
     else {
-        throw "email must include @student.thomasmore.be"
+        res.json({
+            "status": "error",
+            "message": "Your email is not verified by Thomas More."
+        })
     }
 };
 
@@ -46,7 +51,7 @@ const login = async  (req, res, next) => {
             if (!result.user){
                 return res.json({
                     "status": "failed",
-                    "message": "Login failed"
+                    "message": "Your login credentials are not correct."
                 })
             }
 
