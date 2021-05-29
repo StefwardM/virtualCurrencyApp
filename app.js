@@ -25,12 +25,14 @@ const app = express();
 const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 mongoose.connect(config.get('Database.conn'), {useNewUrlParser: true, useUnifiedTopology: true});
+let db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
-const client = mongodb.MongoClient.connect('mongodb+srv://pepeNodejs:JveOjfDtSChrDZ5F@cluster0.mxvxy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority' );
-const conn = mongoose.createConnection().setClient(await client);
+//const client = mongodb.MongoClient.connect('mongodb+srv://pepeNodejs:JveOjfDtSChrDZ5F@cluster0.mxvxy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority' );
+//const conn = mongoose.createConnection().setClient(await client);
 
-conn.getClient(); // MongoClient { ... }
+//conn.getClient(); // MongoClient { ... }
 
 
 // view engine setup
@@ -69,29 +71,29 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const User = require('../../../models/User');
+//const User = require('../../../models/User');
 
 
-const getAll = (req, res) => {
-  User.find( (err, docs) => {
-    if(err) {
-      res.json({
-        "status": "error",
-        "message": err
-      })
-    }
-    else{
-      res.json({
-        "status": "success",
-        "data": {
-          "users": docs
-        }
-      });
-    }
-  });
-}
+// const getAll = (req, res) => {
+//   User.find( (err, docs) => {
+//     if(err) {
+//       res.json({
+//         "status": "error",
+//         "message": err
+//       })
+//     }
+//     else{
+//       res.json({
+//         "status": "success",
+//         "data": {
+//           "users": docs
+//         }
+//       });
+//     }
+//   });
+// }
 
-let collection = getAll();
+//let collection = getAll();
 
 app.get("/search", async (request, response) =>{
   try{
