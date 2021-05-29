@@ -1,4 +1,5 @@
 const Transfer = require('../../../models/Transfer');
+const User = require('../../../models/User');
 
 const getAllByPpName = (req, res) => {
     Transfer.find({$or:[{"sender": req.user.ppname}, {"recipient": req.user.ppname}]}, (err, docs) => {
@@ -40,35 +41,68 @@ const create = (req, res) => {
     transfer.message = req.body.message;
     transfer.amount = req.body.amount;
     transfer.reason = req.body.reason;
-    transfer.save((err, doc) => {
-       if (err) {
-           res.json({
-               "status": "error",
-               "message": "Could not save this transfer",
-               "transfer": transfer,
-               "error": err,
-               "user":req.user.ppname
-           });
-       }
-        if (!err) {
-            res.json({
-                "status": "success",
-                "data": {
-                    "transfer": doc
-                }
 
-            });
+    User.findOne({ppname: senderUsername}, {"coins": 1}, (err, doc) => {
+        if(err){
+            res.json({
+                "status": "Error",
+                "message": "User doesn't exist."
+            })
         }
+        else {
+            User.count({ppname: req.body.recipient}, (err, count) => {
+                if(count <= 0){
+                    res.json({
+                       "status": "Error",
+                       "message": "The user you try to send coins to doesn't exist."
+                    })
+                }
+                else{
+                    let coins = doc.coins;
+                    let amount = req.body.amount;
+                    if((amount > 0) && (coins >= amount)) {
+                        transfer.save((err, doc) => {
+                            if (err) {
+                                res.json({
+                                    "status": "error",
+                                    "message": "Could not save this transfer - not enough coins in balance!"
+                                });
+                            }
+                            else {
+                                User.findOneAndUpdate({ppname: senderUsername}, {$inc: {coins: parseInt(`-${amount}`)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
+                                    if (err) {
+                                        res.json({
+                                            "status": "error",
+                                            "message": "Could not save this transfer - Something went wrong with updating the users coins (sender)"
+                                        });
+                                    }
+                                    else {
+                                        User.findOneAndUpdate({ppname: req.body.recipient}, {$inc: {coins: parseInt(amount)}}, {returnNewDocument: true, useFindAndModify: false}, (err) => {
+                                            if (err) {
+                                                res.json({
+                                                    "status": "error",
+                                                    "message": "Could not save this transfer - Something went wrong with updating the users coins (recipient)"
+                                                });
+                                            }
+                                        })
+                                    }
+                                })
+                                res.json({
+                                    "status": "success",
+                                    "data": {
+                                        "transfer": doc
+                                    }
+                                });
+                            }
+                        })
+                    }
+                }
+            })
+        }
+
     })
 }
 
-const update = (req, res) => {
-    let user = req.user.ppname;
-    let transferId = req.params.id;
-    console.log(transferId);
-}
-
-module.exports.update = update;
 module.exports.getTransferById = getTransferById;
 module.exports.getAll = getAllByPpName;
 module.exports.create = create;

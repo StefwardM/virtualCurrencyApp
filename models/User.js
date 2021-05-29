@@ -13,7 +13,8 @@ const User = new Schema({
     },
     ppname: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     coins : {
         type: Number
