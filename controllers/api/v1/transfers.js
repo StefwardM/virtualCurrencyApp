@@ -35,9 +35,8 @@ const getTransferById = (req, res) => {
 }
 
 const create = (req, res) => {
-    let senderUsername = req.user.ppname;
     let transfer = new Transfer();
-    transfer.sender = senderUsername;
+    transfer.sender = req.user.ppname;
     transfer.recipient = req.body.recipient;
     transfer.message = req.body.message;
     transfer.amount = req.body.amount;
