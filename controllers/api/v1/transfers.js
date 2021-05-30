@@ -97,12 +97,6 @@ const create = (req, res) => {
                             }
                         })
                     }
-                    else{
-                        return res.json ({
-                            "status": "error",
-                            "message": "Not enough coins to send!"
-                        })
-                    }
                 }
             })
         }
