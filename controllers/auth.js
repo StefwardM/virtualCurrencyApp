@@ -11,7 +11,7 @@ const signup = async (req, res, next) => {
     let ppname = req.body.ppname;
     let coins = 100;
 
-    let mail = ppname.split("@");
+    let mail = username.split("@");
 
     if(mail[1] === "student.thomasmore.be" || mail[1] === "thomasmore.be") {
         const user = new User({username: username, firstname: firstname, lastname: lastname, ppname: ppname, coins: coins});
