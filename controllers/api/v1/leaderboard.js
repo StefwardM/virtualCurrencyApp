@@ -6,7 +6,7 @@ const getLeaderboard = (req, res) => {
         if(err) {
             res.json({
                 "status": "error",
-                "message": err
+                "message": "There is no leaderboard available"
             })
         }
         else{
