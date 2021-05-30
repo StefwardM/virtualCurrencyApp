@@ -11,7 +11,9 @@ const signup = async (req, res, next) => {
     let ppname = req.body.ppname;
     let coins = 100;
 
-    if(username.includes('@student.thomasmore.be')) {
+    let mail = ppname.split("@");
+
+    if(mail[1] === "student.thomasmore.be" || mail[1] === "thomasmore.be") {
         const user = new User({username: username, firstname: firstname, lastname: lastname, ppname: ppname, coins: coins});
         await user.setPassword(password);
         await user.save().then(result => {
@@ -36,7 +38,10 @@ const signup = async (req, res, next) => {
         });
     }
     else {
-        throw "email must include @student.thomasmore.be"
+        res.json({
+            "status": "error",
+            "message":"You need an email from Thomas more to register."
+        })
     }
 };
 

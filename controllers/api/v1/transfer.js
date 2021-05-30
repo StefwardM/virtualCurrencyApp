@@ -5,7 +5,7 @@ const getHistory = (req, res) => {
         if(err) {
             res.json({
                 "status": "error",
-                "message": err
+                "message": "There is not history available."
             })
         }
         else{

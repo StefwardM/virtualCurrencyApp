@@ -20,7 +20,7 @@ const getTransferById = (req, res) => {
         if(err) {
             res.json({
                 "status": "error",
-                "message": err
+                "message": "The transfer couldn't be found."
             })
         }
         else{
